@@ -44,7 +44,7 @@ const refresh = () => {
 // Close Current
 const closeCurrentTab = () => {
 	if (route.meta.affix) return;
-	appStore.removeTab(route.fullPath);
+	appStore.removeTab(route.fullPath, true);
 };
 
 // Close Other

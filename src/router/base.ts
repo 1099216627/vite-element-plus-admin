@@ -14,8 +14,19 @@ export const RootRoute = {
 	name: "Root",
 	redirect: "/dashboard",
 	component: Layout,
-	children: []
+	children: [
+		{
+			path: "/i18n",
+			name: "I18n",
+			component: () => import("@/views/i18n/index.vue"),
+			meta: {
+				title: "国际化测试",
+				icon: "language"
+			}
+		}
+	]
 };
+
 export const ErrorPageRoute = {
 	path: "/:path(.*)*",
 	name: ERROR_NAME,

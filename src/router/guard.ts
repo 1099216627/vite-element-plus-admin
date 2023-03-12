@@ -6,7 +6,7 @@ import { useUserStore } from "@/store/modules/user";
 import { Router, RouteRecordRaw } from "vue-router";
 import { BASE_PATH, ERROR_NAME, LOGIN_PATH, WHITE_LIST } from "./constant";
 import NProgress from "@/plugins/nprogress";
-import { ErrorPageRoute } from "@/router/base";
+import { ErrorPageRoute, RootRoute } from "@/router/base";
 import { storeToRefs } from "pinia";
 import { useAppStore } from "@/store/modules/app";
 import { generateRoutes } from "./uitls";
@@ -58,13 +58,14 @@ export function createRouterGuard(router: Router) {
 			next({ path: LOGIN_PATH });
 			return;
 		}
-		const routes = generateRoutes(data.menus);
+		let routes = generateRoutes(data.menus);
 
-		appStore.setMenuList(routes);
-		//添加动态路由
+		appStore.setMenuList(routes.concat(RootRoute.children));
+		// 添加动态路由;
 		routes.forEach(route => {
 			router.addRoute(route as RouteRecordRaw);
 		});
+
 		//添加404
 		const isErrorPage = router.getRoutes().findIndex(item => item.name === ErrorPageRoute.name);
 		if (isErrorPage === -1) {

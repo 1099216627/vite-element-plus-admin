@@ -14,7 +14,27 @@
 
 		<div class="right-menu">
 			<template v-if="device !== 'mobile'">
-				<change-theme></change-theme>
+				<change-theme class="right-menu-item"></change-theme>
+				<el-dropdown trigger="click" @command="handleSelect">
+					<span class="el-dropdown-link">
+						<svg-icon
+							name="i18n"
+							class="right-menu-item"
+							:iconStyle="{
+								width: '35px',
+								height: '35px'
+							}"
+						></svg-icon>
+					</span>
+					<template #dropdown>
+						<el-dropdown-menu>
+							<el-dropdown-item v-for="item in i18nOptions" :command="item.value" :key="item.value">{{
+								item.label
+							}}</el-dropdown-item>
+						</el-dropdown-menu>
+					</template>
+				</el-dropdown>
+
 				<size-select class="right-menu-item"></size-select>
 				<search-menu class="right-menu-item"></search-menu>
 				<full-screen class="right-menu-item"></full-screen>
@@ -45,7 +65,7 @@
 
 <script setup lang="ts">
 import { useAppStore } from "@/store/modules/app";
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useUserStore } from "@/store/modules/user";
 import Hamburger from "@/components/hamburger/index.vue";
@@ -56,6 +76,9 @@ import SizeSelect from "./components/size-select.vue";
 import ChangeTheme from "./components/change-theme.vue";
 import SvgIcon from "@/components/svg-icon/index.vue";
 import DefaultAvatar from "@/assets/avatar.gif";
+import { useI18n } from "vue-i18n";
+import { ElMessage } from "element-plus";
+const { locale } = useI18n();
 const appStore = useAppStore();
 const userStore = useUserStore();
 const router = useRouter();
@@ -65,6 +88,17 @@ const avatar = computed(() => userStore.userInfo?.profile.avatar || DefaultAvata
 const toggleSideBar = (value: boolean) => {
 	appStore.setConfig({ isCollapse: value });
 };
+
+const i18nOptions = [
+	{
+		label: "简体中文",
+		value: "zh"
+	},
+	{
+		label: "English",
+		value: "en"
+	}
+];
 const handleCommand = (command: string) => {
 	switch (command) {
 		case "personal":
@@ -78,13 +112,26 @@ const handleCommand = (command: string) => {
 			break;
 	}
 };
+
+const handleSelect = (value: string) => {
+	if (value === locale.value) return;
+	appStore.setConfig({ locale: value });
+	locale.value = value;
+	const language = value === "zh" ? "中文" : "English";
+	ElMessage.success(`切换语言成功，当前语言：${language}`);
+};
+
+onMounted(() => {
+	handleSelect(appStore.config.locale);
+});
 </script>
 
 <style scoped lang="scss">
 .navbar {
-	@apply h-[50px] overflow-hidden relative bg-white flex items-center justify-between;
+	@apply h-[50px] overflow-hidden relative flex items-center justify-between;
 
-	box-shadow: 0 1px 4px rgb(0 21 41 / 8%);
+	background-color: var(--theme-header-bg-color);
+	border-bottom: 1px solid var(--theme-header-border-color);
 	.hamburger-container {
 		@apply flex items-center ml-[15px] cursor-pointer;
 	}

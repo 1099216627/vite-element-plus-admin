@@ -42,12 +42,6 @@ onMounted(() => {
 .hasFooter .app-main {
 	height: calc(100vh - 34px);
 }
-.base-container {
-	@apply w-full h-full relative;
-
-	padding: 10px;
-	background-color: var(--theme-background-color-lighter);
-}
 .fixed-header + .app-main {
 	padding: 50px 0 0;
 }

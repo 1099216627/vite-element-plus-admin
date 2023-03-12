@@ -16,15 +16,9 @@
 	align-items: center;
 	justify-content: center;
 	height: 34px;
-	color: var(--theme-text-color-lighter);
-
-	// transition: width 0.3s ease-in-out;
-	// position: fixed;
-	// bottom: 0;
-	// width: calc(100% - 200px);
-	// left: 200px;
-	background-color: var(--theme-background-color);
-	border: 1px solid var(--theme-border-color-lighter);
+	color: var(--theme-footer-text-color);
+	background-color: var(--theme-footer-bg-color);
+	border: 1px solid var(--theme-footer-border-color);
 	border-radius: 4px;
 }
 </style>

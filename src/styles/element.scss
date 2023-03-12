@@ -4,6 +4,11 @@
 	z-index: 99999 !important;
 }
 
+// * el-card 样式
+html.dark .el-card {
+	background-color: var(--theme-main-bg-color) !important;
+}
+
 // * 设置 el-alert 边框
 .el-alert {
 	border: 1px solid;

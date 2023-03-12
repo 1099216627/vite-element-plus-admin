@@ -81,8 +81,10 @@ const statisticData = [
 .statistic-card {
 	height: 100%;
 	padding: 20px;
-	background-color: #ffffff;
+	background-color: var(--theme-header-bg-color);
+	border: 1px solid var(--theme-main-border-color);
 	border-radius: 4px;
+	box-shadow: 0 2px 12px 0 rgb(0 0 0 / 10%);
 }
 .statistic-footer {
 	display: flex;

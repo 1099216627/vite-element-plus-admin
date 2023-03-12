@@ -10,6 +10,7 @@
 
 		width: $side-bar-width;
 		background-color: var(--theme-menu-bg-color);
+		border-right: 1px solid var(--theme-menu-border-color);
 
 		// 滚动条样式
 		.scrollbar-wrapper {

@@ -1,12 +1,13 @@
 <template>
 	<div class="fullscreen">
-		<img @click="toggle" class="w-[25px]" :src="isFullscreen ? CancelScreen : Screen" alt="" />
+		<div class="fullscreen-icon" @click="toggle">
+			<svg-icon :name="isFullscreen ? 'cancel-full-screen' : 'full-screen'"></svg-icon>
+		</div>
 	</div>
 </template>
 
 <script setup lang="ts">
 import { useFullscreen } from "@vueuse/core";
-import CancelScreen from "@/assets/images/common/cancel-screen.svg";
-import Screen from "@/assets/images/common/screen.svg";
+import SvgIcon from "@/components/svg-icon/index.vue";
 const { toggle, isFullscreen } = useFullscreen();
 </script>

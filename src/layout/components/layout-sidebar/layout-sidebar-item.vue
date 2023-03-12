@@ -42,7 +42,7 @@ const props = defineProps<{
 }>();
 let onlyOneChild = ref<any>(null);
 
-const hasOneShowingChild = (children: Menu.AppRouteRaw[], parent: Menu.AppRouteRaw) => {
+const hasOneShowingChild = (children: Menu.AppRouteRaw[] = [], parent: Menu.AppRouteRaw) => {
 	const showingChildren = children.filter(item => {
 		if (item.meta.hidden) {
 			return false;

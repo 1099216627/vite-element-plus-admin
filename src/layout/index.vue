@@ -103,7 +103,6 @@ onMounted(() => {
 }
 .hideSidebar .app-footer {
 	left: 54px;
-	width: calc(100% - 54px);
 	transition: width 0.3s ease-in-out;
 }
 .mobile .fixed-header {

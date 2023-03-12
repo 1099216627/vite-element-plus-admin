@@ -24,6 +24,7 @@ interface AppState {
 		animation: boolean;
 		showBreadcrumb: boolean;
 		theme: string;
+		locale: string;
 	};
 }
 
@@ -47,7 +48,8 @@ export const useAppStore = defineStore(
 				elementSize: ComponentSizeEnum.DEFAULT, //element尺寸
 				animation: true, //是否开启动画
 				showBreadcrumb: true, //是否显示面包屑
-				theme: "light" //主题
+				theme: "light", //主题
+				locale: "zh" //语言
 			}
 		});
 

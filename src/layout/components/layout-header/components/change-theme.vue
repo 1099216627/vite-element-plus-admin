@@ -14,7 +14,7 @@
 
 <script setup lang="tsx">
 import { useAppStore } from "@/store/modules/app";
-import { computed } from "vue";
+import { computed, onMounted } from "vue";
 import SvgIcon from "@/components/svg-icon/index.vue";
 const appStore = useAppStore();
 const theme = computed(() => appStore.config.theme);
@@ -39,6 +39,10 @@ const changeTheme = (value: any) => {
 	html.setAttribute("class", value);
 	appStore.setConfig({ theme: value });
 };
+
+onMounted(() => {
+	changeTheme(theme.value);
+});
 </script>
 
 <style scoped></style>
