@@ -1,5 +1,5 @@
 export function is(value: any, type: string) {
-	return Object.toString.call(value) === `[object ${type}]`;
+	return Object.prototype.toString.call(value) === `[object ${type}]`;
 }
 
 export function isFunction(value: any) {
@@ -21,4 +21,12 @@ export function isObject(value: any) {
 export function isUrl(path: string) {
 	const reg = /^(https?:|mailto:|tel:)/;
 	return reg.test(path);
+}
+
+export function isExternal(path: string) {
+	return /^(https?:|mailto:|tel:)/.test(path);
+}
+
+export function isArray(value: any) {
+	return is(value, "Array");
 }

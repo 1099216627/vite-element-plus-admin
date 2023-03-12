@@ -1,4 +1,4 @@
-import { Menu } from "@/model/menu-mode";
+import { Menu } from "@/models/menu-model";
 import { floatToTree } from "@/utils";
 export const Layout = () => import("@/layout/index.vue");
 const LayoutMap = new Map<string, () => Promise<typeof import("*.vue")>>();
@@ -13,6 +13,7 @@ export function generateRoutes(routes: Menu.ItemRaw[]) {
 		if (tmp.children) {
 			tmp.children = generateRoutes(tmp.children);
 		}
+
 		tmp = asyncImportRoute(tmp);
 		res.push(tmp);
 	});
@@ -32,6 +33,7 @@ export function generateRoute(route: Menu.ItemRaw) {
 		hidden: route.hidden,
 		cache: route.cache
 	};
+	res.children = route.children || [];
 	return res;
 }
 

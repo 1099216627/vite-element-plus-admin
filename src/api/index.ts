@@ -1,19 +1,21 @@
 import { MyAxios } from "./axios-instance";
 import { AxiosTransform } from "./hepler/axios-transform";
 import axios, { AxiosResponse } from "axios";
-import { useRouter } from "vue-router";
 import { checkStatus } from "./hepler/check-status";
 import { joinTimestamp, formatRequestDate } from "./hepler/timestamp";
 import { CreateAxiosOptions, ResultData } from "@/api/types";
-import { RequestEnum, ResultEnum } from "@/enums/http-enum";
+import { ContentTypeEnum, RequestEnum, ResultEnum } from "@/enums/http-enum";
 import { RequestOptions } from "@/api/types";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { isString, isUrl } from "@/utils/is";
 import { setObjToUrlParams } from "@/utils";
 import { useUserStore } from "@/store/modules/user";
-import { defaultOptions } from "@/api/config";
+import { useAppStore } from "@/store/modules/app";
 import { LOGIN_NAME, LOGIN_PATH } from "@/router/constant";
-
+import router from "@/router";
+const urlPrefix = import.meta.env.VITE_GLOBAL_HTTP_PREFIX;
+const baseUrl = import.meta.env.VITE_GLOBAL_HTTP_URL;
+const timeout = import.meta.env.VITE_GLOBAL_HTTP_TIMEOUT;
 const transform: AxiosTransform = {
 	// 请求之前处理config
 	beforeRequestHook: (config, options) => {
@@ -27,6 +29,7 @@ const transform: AxiosTransform = {
 		if (!isUrlStr && apiUrl && isString(apiUrl)) {
 			config.url = `${apiUrl}${config.url}`;
 		}
+
 		const params = config.params || {};
 		const data = config.data || false;
 		if (config.method?.toUpperCase() === RequestEnum.GET) {
@@ -69,7 +72,6 @@ const transform: AxiosTransform = {
 			isReturnNativeResponse
 		} = options;
 
-		// 是否返回原生响应头 比如：需要获取响应头时使用该属性
 		if (isReturnNativeResponse) {
 			return res;
 		}
@@ -99,7 +101,6 @@ const transform: AxiosTransform = {
 					});
 			}
 		}
-		const router = useRouter();
 		// 不进行任何处理，直接返回
 		// 用于页面代码可能需要直接获取code，data，message这些信息时开启
 		if (!isTransformResponse) {
@@ -137,7 +138,7 @@ const transform: AxiosTransform = {
 	// 请求拦截配置
 	requestInterceptors: (config, options) => {
 		const userStore = useUserStore();
-		const token = userStore.getToken;
+		const token = userStore.getToken();
 		if (token && (config as Recordable)?.requestOptions?.withToken !== false) {
 			(config as Recordable).headers.Authorization = options.authenticationScheme
 				? `${options.authenticationScheme} ${token}`
@@ -145,10 +146,12 @@ const transform: AxiosTransform = {
 		}
 		return config;
 	},
-	// 响应拦截配置
+	// 响应错误拦截配置
 	responseInterceptorsCatch: (error: any) => {
-		const router = useRouter();
+		const userStore = useUserStore();
+		const appStore = useAppStore();
 		const { response, code, message } = error || {};
+		const msg = response?.data?.message || "";
 		const err: string = error.toString();
 		try {
 			if (code === "ECONNABORTED" && message.indexOf("timeout") !== -1) {
@@ -164,21 +167,99 @@ const transform: AxiosTransform = {
 		}
 		// 请求是否被取消
 		const isCancel = axios.isCancel(error);
-		if (!isCancel) {
+		if (msg) {
+			ElMessage.error(msg);
+		} else if (!isCancel) {
 			checkStatus(response && response.status);
 		} else {
 			console.warn(error, "请求被取消！");
 		}
 		//当返回信息为未授权或者未登录或者登录超时时，跳转到登录页面
-		if (error.response && (error.response.status === 401 || error.response.status === 419)) {
-			router.push("/login");
+		if (response && response.status === 401) {
+			//refresh_token,如果有的话，可以在这里刷新token
+			appStore.resetPermissions();
+			userStore.resetState();
+			router.push({
+				path: LOGIN_PATH,
+				query: {
+					redirect: router.currentRoute.value.fullPath
+				}
+			});
 		}
 		return Promise.reject(response?.data);
 	}
 };
 //多个对象合并
 function createAxiosInstance(opt?: Partial<CreateAxiosOptions>) {
-	return new MyAxios(Object.assign({}, opt || {}, defaultOptions(transform)));
+	const options = Object.assign(
+		{
+			timeout: Number(timeout),
+			authenticationScheme: "Bearer",
+			headers: {
+				"Content-Type": ContentTypeEnum.JSON
+			},
+			// 数据处理方式
+			transform,
+			// 配置项，下面的选项都可以在独立的接口请求中覆盖
+			requestOptions: {
+				// 是否显示错误提示
+				isShowErrorMessage: true,
+				// 默认将prefix 添加到url
+				joinPrefix: true,
+				// 是否返回原生响应头 比如：需要获取响应头时使用该属性
+				isReturnNativeResponse: false,
+				// 需要对返回数据进行处理
+				isTransformResponse: false,
+				// post请求的时候添加参数到url
+				joinParamsToUrl: false,
+				// 格式化提交参数时间
+				formatDate: true,
+				// 消息提示类型
+				errorMessageMode: "none",
+				// 接口地址
+				apiUrl: baseUrl,
+				// 接口拼接地址
+				urlPrefix: urlPrefix,
+				//  是否加入时间戳
+				joinTime: true,
+				// 忽略重复请求
+				ignoreCancelToken: true,
+				// 是否携带token
+				withToken: true
+			},
+			withCredentials: true
+		},
+		opt || {}
+	);
+	return new MyAxios(options);
 }
 
 export const http = createAxiosInstance();
+export const http2 = createAxiosInstance({
+	requestOptions: {
+		// 是否显示错误提示
+		isShowErrorMessage: true,
+		// 默认将prefix 添加到url
+		joinPrefix: true,
+		// 是否返回原生响应头 比如：需要获取响应头时使用该属性
+		isReturnNativeResponse: true,
+		// 需要对返回数据进行处理
+		isTransformResponse: false,
+		// post请求的时候添加参数到url
+		joinParamsToUrl: false,
+		// 格式化提交参数时间
+		formatDate: true,
+		// 消息提示类型
+		errorMessageMode: "none",
+		// 接口地址
+		apiUrl: baseUrl,
+		// 接口拼接地址
+		urlPrefix: urlPrefix,
+		//  是否加入时间戳
+		joinTime: true,
+		// 忽略重复请求
+		ignoreCancelToken: true,
+		// 是否携带token
+		withToken: true
+	}
+});

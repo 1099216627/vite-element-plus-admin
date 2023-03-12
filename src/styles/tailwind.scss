@@ -1,0 +1,20 @@
+/* stylelint-disable */
+@import "tailwindcss/base";
+@import "tailwindcss/components";
+@import "tailwindcss/utilities";
+
+@layer utilities {
+	.clearfix {
+		&::after {
+			display: table;
+			clear: both;
+			content: "";
+		}
+	}
+	.base-container {
+		display: flex;
+		flex-direction: column;
+		border-radius: 0.25rem;
+		box-shadow: 0 0 0 1px rgb(0 0 0 / 5%), 0 1px 2px 0 rgb(0 0 0 / 10%) !important;
+	}
+}

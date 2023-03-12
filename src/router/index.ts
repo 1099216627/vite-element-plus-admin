@@ -1,5 +1,5 @@
-import { createRouter, createWebHashHistory } from "vue-router";
-import { ErrorPageRoute, LoginRoute, RedirectRoute } from "@/router/base";
+import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
+import { LoginRoute, RedirectRoute, RootRoute } from "@/router/base";
 import { App } from "vue";
 import { createRouterGuard } from "./guard";
 /**
@@ -19,7 +19,7 @@ import { createRouterGuard } from "./guard";
  * @param meta.isKeepAlive ==> 是否缓存
  * */
 
-const basicRoutes = [LoginRoute, ErrorPageRoute, RedirectRoute];
+const basicRoutes = [RootRoute, LoginRoute, RedirectRoute] as readonly RouteRecordRaw[];
 const router = createRouter({
 	history: createWebHashHistory(),
 	routes: basicRoutes,

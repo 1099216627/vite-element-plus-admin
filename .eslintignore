@@ -14,3 +14,5 @@ html
 /bin
 .eslintrc.cjs
 .prettierrc.cjs
+*.scss
+*.css

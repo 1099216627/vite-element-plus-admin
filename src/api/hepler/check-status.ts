@@ -37,6 +37,8 @@ export const checkStatus = (status: number): void => {
 		case 504:
 			ElMessage.error("网关超时！");
 			break;
+		case 422:
+			ElMessage.error("验证错误！请检查您的提交信息");
 		default:
 			ElMessage.error("请求失败！");
 	}

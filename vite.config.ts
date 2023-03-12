@@ -10,8 +10,8 @@ import vueSetupExtend from "vite-plugin-vue-setup-extend-plus";
 import eslintPlugin from "vite-plugin-eslint";
 import vueJsx from "@vitejs/plugin-vue-jsx";
 import importToCDN from "vite-plugin-cdn-import";
-
-// import AutoImport from "unplugin-auto-import/vite";
+// import fs from "fs";
+// // import AutoImport from "unplugin-auto-import/vite";
 // import Components from "unplugin-vue-components/vite";
 // import { ElementPlusResolver } from "unplugin-vue-components/resolvers";
 
@@ -21,10 +21,10 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
 	const viteEnv = wrapperEnv(env);
 
 	return {
-		base: "./",
+		base: process.env.NODE_ENV === "production" ? "./" : "/",
 		resolve: {
 			alias: {
-				"@": resolve(__dirname, "./src"),
+				"@": resolve(__dirname, "src"),
 				"vue-i18n": "vue-i18n/dist/vue-i18n.cjs.js"
 			}
 		},
@@ -36,17 +36,19 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
 			}
 		},
 		server: {
-			// 服务器主机名，如果允许外部访问，可设置为 "0.0.0.0"
-			host: "0.0.0.0",
-			port: viteEnv.VITE_PORT,
+			port: 4000 || viteEnv.VITE_PORT,
 			open: viteEnv.VITE_OPEN,
-			cors: true,
-			// 跨域代理配置
+			// https: {
+			// 	key: fs.readFileSync(resolve(__dirname, "./ssl/key.pem")),
+			// 	cert: fs.readFileSync(resolve(__dirname, "./ssl/cert.pem"))
+			// },
+			// cors: true,
+			// 跨域代理配置(http协议下暂用，解决跨域请求无法携带cookie问题)
 			proxy: {
-				"/admin": {
+				"/api": {
 					target: "http://localhost:3000",
 					changeOrigin: true,
-					rewrite: path => path.replace(/^\/admin/, "")
+					rewrite: path => path.replace(/^\/api/, "/api")
 				}
 			}
 		},
@@ -61,8 +63,8 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
 			}),
 			// * 使用 svg 图标
 			createSvgIconsPlugin({
-				iconDirs: [resolve(process.cwd(), "src/assets/icons")],
-				symbolId: "icon-[dir]-[name]"
+				iconDirs: [resolve(__dirname, "./src/assets/icons")],
+				symbolId: "icon-[name]"
 			}),
 			// * EsLint 报错信息显示在浏览器界面上
 			eslintPlugin(),
@@ -99,7 +101,8 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
 				]
 			})
 			// * demand import element
-			// AutoImport({
+			// AutoImporimport { fs } from 'fs';
+
 			// 	resolvers: [ElementPlusResolver()]
 			// }),
 			// Components({

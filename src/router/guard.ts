@@ -14,6 +14,7 @@ export function createRouterGuard(router: Router) {
 	const userStore = useUserStore();
 	const appStore = useAppStore();
 	const { token } = storeToRefs(userStore);
+
 	const { dynamicRouteAdded, keepAliveList } = storeToRefs(appStore);
 	router.beforeEach(async (to, from, next) => {
 		// 1.NProgress 开始
@@ -25,18 +26,23 @@ export function createRouterGuard(router: Router) {
 			next({ path: BASE_PATH });
 			return;
 		}
-		// 3.当存在于白名单时，直接进入
-		if (WHITE_LIST.includes(to.path)) {
-			next();
-			return;
-		}
-		//4.当token不存在时
+		//3.当token不存在时
 		if (!token.value) {
+			// 4.当存在于白名单时，直接进入
+			if (WHITE_LIST.includes(to.path)) {
+				next();
+				return;
+			}
 			const redirectData: { path: string; replace: boolean; query?: Recordable<string> } = { path: LOGIN_PATH, replace: true };
 			if (to.path) {
 				redirectData.query = { ...redirectData.query, redirect: to.path };
 			}
 			next(redirectData);
+			return;
+		}
+		//5.当已登录时，无法进入whiteList
+		if (WHITE_LIST.includes(to.path)) {
+			next({ path: BASE_PATH });
 			return;
 		}
 		//5.当已添加动态路由时，直接进入
@@ -46,12 +52,16 @@ export function createRouterGuard(router: Router) {
 		}
 		//6.当未添加动态路由时，添加动态路由，并获取用户信息
 		await userStore.getUserInfo();
-		const data = appStore.getMenusByUser();
-		if (!data) {
+		const data = await appStore.getMenusByUser();
+
+		if (!data || !data.menus) {
 			next({ path: LOGIN_PATH });
 			return;
 		}
-		const routes = generateRoutes(data as any);
+		const routes = generateRoutes(data.menus);
+
+		appStore.setMenuList(routes);
+		//添加动态路由
 		routes.forEach(route => {
 			router.addRoute(route as RouteRecordRaw);
 		});
@@ -65,6 +75,7 @@ export function createRouterGuard(router: Router) {
 		const redirect = decodeURIComponent(redirectPath);
 		const nextData = to.path === redirect ? { ...to, replace: true } : { path: redirect };
 		appStore.setDynamicRouteAdded(true);
+
 		next(nextData);
 	});
 

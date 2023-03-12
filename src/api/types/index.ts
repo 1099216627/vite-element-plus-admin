@@ -13,17 +13,18 @@ export interface ResultData<T = any> extends Result {
 }
 
 // * 分页响应参数
-export interface ResPage<T> {
+export interface ResPage<T = any> {
 	list: T[];
-	pageNum: number;
-	pageSize: number;
+	page: number;
+	size: number;
 	total: number;
+	pages: number;
 }
 
 // * 分页请求参数
 export interface ReqPage {
-	pageNum: number;
-	pageSize: number;
+	page: number;
+	limit: number;
 }
 
 // * 文件上传模块
@@ -38,6 +39,8 @@ export namespace Login {
 	export interface ReqLoginForm {
 		username: string;
 		password: string;
+		code: string;
+		codeId: string;
 	}
 	export interface ResLogin {
 		access_token: string;

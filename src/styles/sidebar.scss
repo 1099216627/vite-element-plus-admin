@@ -1,0 +1,204 @@
+/* stylelint-disable */
+#app {
+	.main-container {
+		@apply min-h-full transition-[margin-left] duration-[280] relative;
+
+		margin-left: $side-bar-width;
+	}
+	.sidebar-container {
+		@apply transition-[width] duration-[280] h-full fixed text-[0] top-0 left-0 bottom-0 right-0 z-[1001] overflow-hidden;
+
+		width: $side-bar-width;
+		background-color: var(--theme-menu-bg-color);
+
+		// 滚动条样式
+		.scrollbar-wrapper {
+			overflow-x: hidden !important;
+		}
+		.el-scrollbar__bar.is-vertical {
+			right: 0;
+		}
+		.is-horizontal {
+			display: none;
+		}
+		.el-scrollbar {
+			height: 100%;
+		}
+
+		a {
+			display: inline-block;
+			width: 100%;
+			overflow: hidden;
+		}
+
+		// 菜单样式
+		.el-menu {
+			width: 100% !important;
+			height: 100%;
+			border: none;
+			.sub-menu-title-noDropdown {
+				padding-left: 15px !important;
+				.svg-icon {
+					margin-right: 5px;
+				}
+			}
+		}
+
+		// 菜单项样式
+		.el-sub-menu {
+			background-color: var(--theme-menu-bg-color) !important;
+		}
+
+		// 菜单项样式hover and title
+		.el-sub-menu__title {
+			height: 38px;
+			padding-left: 15px !important;
+			font-size: 12px !important;
+			color: var(--theme-menu-text-color);
+			&:hover {
+				background-color: var(--theme-hover-menu-bg-color) !important;
+			}
+		}
+
+		// 激活菜单项样式
+		.is-active > .el-sub-menu__title {
+			color: var(--theme-menu-text-color) !important;
+		}
+
+		// 二级菜单样式
+		& .nest-menu .el-sub-menu > .el-sub-menu__title,
+		& .el-sub-menu .el-menu-item {
+			min-width: $side-bar-width !important;
+			height: 38px;
+			color: var(--theme-menu-text-color);
+			background-color: var(--theme-menu-bg-color) !important;
+			&.is-active {
+				background-color: var(--theme-active-menu-bg-color) !important;
+				&:hover {
+					background-color: var(--theme-active-menu-bg-color) !important;
+				}
+			}
+			&:hover {
+				background-color: var(--theme-hover-menu-bg-color) !important;
+			}
+		}
+	}
+	.hideSidebar {
+		// 隐藏侧边栏激活菜单项样式
+		.el-sub-menu.is-active {
+			& > .el-sub-menu__title {
+				background-color: var(--theme-active-menu-bg-color) !important;
+			}
+		}
+		.sidebar-container {
+			width: 54px !important;
+		}
+
+		// 视图区域偏移样式
+		.main-container {
+			margin-left: 54px;
+		}
+		.el-sub-menu {
+			overflow: hidden;
+			& > .el-sub-menu__title {
+				height: 38px;
+				padding: 0 !important;
+				.el-icon {
+					margin-left: 15px;
+				}
+				.sub-el-icon {
+					margin-left: 19px;
+				}
+				.el-sub-menu__icon-arrow {
+					display: none;
+				}
+			}
+		}
+
+		// 标题隐藏
+		.el-menu--collapse {
+			.el-sub-menu {
+				& > .el-sub-menu__title {
+					& > span {
+						display: none;
+					}
+				}
+			}
+		}
+	}
+	.el-menu--collapse .el-menu .el-sub-menu {
+		min-width: $side-bar-width !important;
+	}
+
+	// mobile responsive
+	.mobile {
+		.main-container {
+			margin-left: 0;
+		}
+		.sidebar-container {
+			width: $side-bar-width !important;
+			transition: transform 0.28s;
+		}
+		&.hideSidebar {
+			.sidebar-container {
+				pointer-events: none;
+				transition-duration: 0.3s;
+				transform: translate3d(-$side-bar-width, 0, 0);
+			}
+		}
+	}
+	.withoutAnimation {
+		.main-container,
+		.sidebar-container {
+			transition: none;
+		}
+	}
+}
+
+// when menu collapsed
+.el-menu--vertical {
+	& > .el-menu {
+		overflow: hidden !important;
+		background-color: var(--theme-menu-bg-color) !important;
+		.svg-icon {
+			margin-right: 16px;
+		}
+		.sub-el-icon {
+			margin-right: 12px;
+			margin-left: -2px;
+		}
+	}
+	.nest-menu .el-sub-menu > .el-sub-menu__title,
+	.el-menu-item {
+		height: 38px;
+		font-size: 12px !important;
+		color: var(--theme-menu-text-color);
+		background-color: var(--theme-menu-bg-color) !important;
+		&:hover {
+			background-color: var(--theme-hover-menu-bg-color) !important;
+		}
+		&.is-active {
+			color: var(--theme-menu-text-color);
+			background-color: var(--theme-active-menu-bg-color) !important;
+			&:hover {
+				background-color: var(--theme-active-menu-bg-color);
+			}
+		}
+	}
+
+	// the scroll bar appears when the sub-menu is too long
+	> .el-menu--popup {
+		max-height: 100vh;
+		overflow-y: auto;
+		&::-webkit-scrollbar-track-piece {
+			background: var(--theme-menu-bg-color);
+		}
+		&::-webkit-scrollbar {
+			width: 6px;
+		}
+		&::-webkit-scrollbar-thumb {
+			background: #99a9bf;
+			border-radius: 20px;
+		}
+	}
+}

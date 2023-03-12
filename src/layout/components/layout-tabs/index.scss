@@ -1,0 +1,53 @@
+.tabs-box {
+	height: 34px;
+	background-color: #ffffff;
+	:deep(.tabs-menu) {
+		position: relative;
+		width: 100%;
+		.el-tabs__item {
+			display: flex;
+			align-items: center;
+			height: 34px;
+		}
+		.el-tabs__nav-prev,
+		.el-tabs__nav-next {
+			display: flex;
+			align-items: center;
+			height: 100%;
+		}
+		.el-dropdown {
+			position: absolute;
+			top: 5px;
+			right: 13px;
+		}
+		.tabs-icon {
+			margin-right: 5px;
+			font-size: 15px;
+		}
+		.el-tabs__nav-wrap {
+			position: absolute;
+			width: calc(100% - 110px);
+		}
+		.el-tabs--card > .el-tabs__header {
+			box-sizing: border-box;
+			height: 34px;
+			padding: 0 10px;
+			margin: 0;
+		}
+		.el-tabs--card > .el-tabs__header .el-tabs__nav {
+			display: flex;
+			border: none;
+		}
+		.el-tabs--card > .el-tabs__header .el-tabs__item {
+			color: #cccccc;
+			border: none;
+		}
+		.el-tabs--card > .el-tabs__header .el-tabs__item.is-active {
+			color: var(--el-color-primary);
+			border-bottom: 2px solid var(--el-color-primary);
+		}
+		.el-tabs__item .is-icon-close svg {
+			margin-top: 0.5px;
+		}
+	}
+}

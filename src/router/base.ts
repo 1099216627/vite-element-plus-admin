@@ -1,4 +1,5 @@
-import { ERROR_NAME, ErrorPage, Layout, LOGIN_NAME, LOGIN_PATH } from "@/router/constant";
+import { ERROR_NAME, ErrorPage, LOGIN_NAME, LOGIN_PATH, BASE_PATH } from "@/router/constant";
+import Layout from "@/layout/index.vue";
 export const LoginRoute = {
 	path: LOGIN_PATH,
 	name: LOGIN_NAME,
@@ -7,6 +8,13 @@ export const LoginRoute = {
 		title: "登录",
 		hidden: true
 	}
+};
+export const RootRoute = {
+	path: BASE_PATH,
+	name: "Root",
+	redirect: "/dashboard",
+	component: Layout,
+	children: []
 };
 export const ErrorPageRoute = {
 	path: "/:path(.*)*",
