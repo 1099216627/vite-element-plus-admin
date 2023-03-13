@@ -1,5 +1,7 @@
 import { ElMessageBox } from "element-plus";
 import { HandleData } from "./types";
+import { ResultEnum } from "@/enums/http-enum";
+import { ResultData } from "@/api/types";
 
 /**
  * @description 操作单条数据信息(二次确认【删除、禁用、启用、重置密码】)
@@ -22,8 +24,9 @@ export const useMessageBox = <P = any, R = any>(
 			type: confirmType,
 			draggable: true
 		}).then(async () => {
-			const res = await api(params);
-			if (!res) return reject(false);
+			const { code } = (await api(params)) as ResultData;
+
+			if (code !== ResultEnum.SUCCESS) return reject(false);
 			resolve(true);
 		});
 	});

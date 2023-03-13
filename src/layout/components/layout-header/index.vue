@@ -84,7 +84,7 @@ const userStore = useUserStore();
 const router = useRouter();
 const device = computed(() => appStore.config.device);
 const isCollapse = computed(() => appStore.config.isCollapse);
-const avatar = computed(() => userStore.userInfo?.profile.avatar || DefaultAvatar);
+const avatar = computed(() => userStore.userInfo?.profile?.avatar || DefaultAvatar);
 const toggleSideBar = (value: boolean) => {
 	appStore.setConfig({ isCollapse: value });
 };
@@ -99,7 +99,7 @@ const i18nOptions = [
 		value: "en"
 	}
 ];
-const handleCommand = (command: string) => {
+const handleCommand = async (command: string) => {
 	switch (command) {
 		case "personal":
 			router.push("/personal");
@@ -107,6 +107,12 @@ const handleCommand = (command: string) => {
 		case "docs":
 			break;
 		case "logout":
+			const success = await userStore.logout();
+			if (success) {
+				appStore.resetPermissions();
+				userStore.resetState();
+				router.push("/login");
+			}
 			break;
 		default:
 			break;

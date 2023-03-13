@@ -48,6 +48,7 @@ import { Resources } from "@/models/resources-mode";
 import { Avatar } from "@element-plus/icons-vue";
 import { FormInstance } from "element-plus";
 import { ResultEnum } from "@/enums/http-enum";
+import { validateUrl } from "@/utils/validate";
 interface DrawerProps {
 	title: string;
 	api: (params: any) => Promise<any>;
@@ -60,7 +61,7 @@ const rules = reactive({
 	cover: [{ required: true, message: "请上传封面", trigger: "blur" }],
 	name: [{ required: true, message: "请输入资源名称", trigger: "blur" }],
 	description: [{ required: true, message: "请输入资源描述", trigger: "blur" }],
-	url: [{ required: true, message: "请输入资源链接", trigger: "blur" }]
+	url: [{ required: true, validator: validateUrl, trigger: "blur" }]
 });
 
 const drawerState = reactive<Partial<DrawerProps>>({});

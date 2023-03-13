@@ -11,11 +11,12 @@ import { isString, isUrl } from "@/utils/is";
 import { setObjToUrlParams } from "@/utils";
 import { useUserStore } from "@/store/modules/user";
 import { useAppStore } from "@/store/modules/app";
+import { refreshToken, addFailedRequest, isRefreshing } from "./hepler/refresh";
 import { LOGIN_NAME, LOGIN_PATH } from "@/router/constant";
-import router from "@/router";
 const urlPrefix = import.meta.env.VITE_GLOBAL_HTTP_PREFIX;
 const baseUrl = import.meta.env.VITE_GLOBAL_HTTP_URL;
 const timeout = import.meta.env.VITE_GLOBAL_HTTP_TIMEOUT;
+import router from "@/router";
 const transform: AxiosTransform = {
 	// 请求之前处理config
 	beforeRequestHook: (config, options) => {
@@ -71,6 +72,13 @@ const transform: AxiosTransform = {
 			isTransformResponse,
 			isReturnNativeResponse
 		} = options;
+		const userStore = useUserStore();
+		const appStore = useAppStore();
+		if (!res.data) {
+			userStore.resetState();
+			appStore.resetPermissions();
+			return Promise.reject(new Error("请求失败"));
+		}
 
 		if (isReturnNativeResponse) {
 			return res;
@@ -148,11 +156,24 @@ const transform: AxiosTransform = {
 	},
 	// 响应错误拦截配置
 	responseInterceptorsCatch: (error: any) => {
+		const { response, code, message } = error || {};
+		const status = response?.status;
+		const config = response?.config || {};
+		const msg = response?.data?.message || "";
 		const userStore = useUserStore();
 		const appStore = useAppStore();
-		const { response, code, message } = error || {};
-		const msg = response?.data?.message || "";
 		const err: string = error.toString();
+		if (status === 401) {
+			// * 401, token失效，通过refreshToken获取新的token
+			if (!isRefreshing) {
+				refreshToken();
+				return new Promise(resolve => {
+					addFailedRequest(() => {
+						resolve(axios.request(config));
+					});
+				});
+			}
+		}
 		try {
 			if (code === "ECONNABORTED" && message.indexOf("timeout") !== -1) {
 				ElMessage.error("接口请求超时，请刷新页面重试!");
@@ -174,18 +195,19 @@ const transform: AxiosTransform = {
 		} else {
 			console.warn(error, "请求被取消！");
 		}
-		//当返回信息为未授权或者未登录或者登录超时时，跳转到登录页面
-		if (response && response.status === 401) {
-			//refresh_token,如果有的话，可以在这里刷新token
-			appStore.resetPermissions();
+
+		// 跳转到登录页
+		if (status === 401) {
 			userStore.resetState();
+			appStore.resetPermissions();
 			router.push({
-				path: LOGIN_PATH,
+				name: LOGIN_NAME,
 				query: {
 					redirect: router.currentRoute.value.fullPath
 				}
 			});
 		}
+
 		return Promise.reject(response?.data);
 	}
 };

@@ -2,17 +2,20 @@
 	<div class="base-container table-box">
 		<basic-table ref="tableRef" :requestApi="getResourcesListApi" :columns="columns">
 			<template #tableHeader>
-				<el-button type="primary" plain @click="openDrawer('新建资源', createResourcesApi)">新建资源</el-button>
+				<el-button type="primary" v-auth="'create_resource'" plain @click="openDrawer('新建资源', createResourcesApi)"
+					>新建资源</el-button
+				>
 			</template>
 			<template #operation="{ row }">
 				<el-button
 					type="primary"
 					link
 					plain
+					v-auth="'update_resource'"
 					@click="openDrawer('编辑资源', (params: any) => updateResourcesApi(row.id, params), row)"
 					>编辑</el-button
 				>
-				<el-button type="danger" link plain @click="deleteResources(row)">删除</el-button>
+				<el-button type="danger" v-auth="'delete_resource'" link plain @click="deleteResources(row)">删除</el-button>
 			</template>
 		</basic-table>
 		<!-- 新建、编辑资源 -->

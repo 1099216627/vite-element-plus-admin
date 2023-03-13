@@ -8,7 +8,7 @@
 			:requestApi="getLogListApi"
 		>
 			<template #tableHeader>
-				<el-button type="danger" @click="deleteAllLog">删除全部日志</el-button>
+				<el-button type="danger" v-auth="'delete_log'" @click="deleteAllLog">删除全部日志</el-button>
 			</template>
 		</basic-table>
 	</div>
@@ -28,7 +28,7 @@ const deleteAllLog = () => {
 	});
 };
 const requestMethod = reactive([
-	{ label: "GET", value: "GET", tagType: "primary" },
+	{ label: "GET", value: "GET", tagType: "info" },
 	{ label: "POST", value: "POST", tagType: "success" },
 	{ label: "PUT", value: "PUT", tagType: "warning" },
 	{ label: "DELETE", value: "DELETE", tagType: "danger" }

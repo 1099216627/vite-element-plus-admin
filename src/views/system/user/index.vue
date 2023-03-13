@@ -4,8 +4,12 @@
 			<!-- 表格 header 按钮 -->
 			<template #tableHeader="scope">
 				<el-button type="primary" plain v-auth="'create_user'" @click="openDrawer('新增用户')">新增用户</el-button>
-				<el-button type="primary" plain :disabled="!scope.isSelected" @click="exportUser">导出用户数据</el-button>
-				<el-button type="danger" plain :disabled="!scope.isSelected" @click="batchDeleteUser"> 批量删除用户 </el-button>
+				<el-button type="primary" plain v-auth="'export_user'" :disabled="!scope.isSelected" @click="exportUser"
+					>导出用户数据</el-button
+				>
+				<el-button type="danger" plain v-auth="'delete_user'" :disabled="!scope.isSelected" @click="batchDeleteUser">
+					批量删除用户
+				</el-button>
 			</template>
 			<!-- 表格操作 -->
 			<template #operation="{ row }">
@@ -16,9 +20,30 @@
 				<el-button type="danger" link v-auth="'delete_user'" @click="deleteUser(row)" v-if="row.status === UserStatusEnum.ENABLE"
 					>删除</el-button
 				>
-				<el-button type="success" link @click="enableUser(row)" v-if="row.status === UserStatusEnum.DISABLE">启用</el-button>
-				<el-button type="warning" link @click="disableUser(row)" v-if="row.status === UserStatusEnum.ENABLE">禁用</el-button>
-				<el-button type="primary" link @click="recoverUser(row)" v-if="row.status === UserStatusEnum.DELETE">恢复</el-button>
+				<el-button
+					type="success"
+					link
+					v-auth="'enable_user'"
+					@click="enableUser(row)"
+					v-if="row.status === UserStatusEnum.DISABLE"
+					>启用</el-button
+				>
+				<el-button
+					type="warning"
+					v-auth="'disable_user'"
+					link
+					@click="disableUser(row)"
+					v-if="row.status === UserStatusEnum.ENABLE"
+					>禁用</el-button
+				>
+				<el-button
+					type="primary"
+					v-auth="'recover_user'"
+					link
+					@click="recoverUser(row)"
+					v-if="row.status === UserStatusEnum.DELETE"
+					>恢复</el-button
+				>
 			</template>
 		</basic-table>
 		<!-- 创建、编辑用户抽屉 -->

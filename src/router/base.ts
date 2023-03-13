@@ -1,4 +1,4 @@
-import { ERROR_NAME, ErrorPage, LOGIN_NAME, LOGIN_PATH, BASE_PATH } from "@/router/constant";
+import { ERROR_NAME, ErrorPage, LOGIN_NAME, LOGIN_PATH, BASE_PATH, REGISTER_NAME, REGISTER_PATH } from "@/router/constant";
 import Layout from "@/layout/index.vue";
 export const LoginRoute = {
 	path: LOGIN_PATH,
@@ -6,6 +6,15 @@ export const LoginRoute = {
 	component: () => import("@/views/login/index.vue"),
 	meta: {
 		title: "登录",
+		hidden: true
+	}
+};
+export const RegisterRoute = {
+	path: REGISTER_PATH,
+	name: REGISTER_NAME,
+	component: () => import("@/views/register/index.vue"),
+	meta: {
+		title: "注册",
 		hidden: true
 	}
 };

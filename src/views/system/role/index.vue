@@ -9,7 +9,7 @@
 		>
 			<!-- 表格 header 按钮 -->
 			<template #tableHeader>
-				<el-button type="primary" plain v-auth="'create_user'" @click="openDialog('新增角色', createRoleApi)">新增角色</el-button>
+				<el-button type="primary" plain v-auth="'create_role'" @click="openDialog('新增角色', createRoleApi)">新增角色</el-button>
 			</template>
 			<!-- 表格expand -->
 			<template #expand="{ row }">
@@ -29,16 +29,28 @@
 				<el-button
 					link
 					type="primary"
-					v-auth="'update_user'"
+					v-auth="'update_role'"
 					@click="openDialog('编辑角色', (params: any) => updateRoleApi(row.id, params), row)"
 					>编辑</el-button
 				>
-				<el-button link type="warning" v-auth="'delete_user'" @click="assignRole(row)">分配权限</el-button>
-				<el-button v-if="row.status === BooleanEnum.YES" link type="warning" @click="updateRoleStatus(row.id, lockRoleApi, true)"
+				<el-button link type="warning" v-auth="'permission_role'" @click="assignRole(row)">分配权限</el-button>
+				<el-button
+					v-if="row.status === BooleanEnum.YES && row.isDefault === BooleanEnum.NO"
+					link
+					type="warning"
+					v-auth="'lock_role'"
+					@click="updateRoleStatus(row.id, lockRoleApi, true)"
 					>锁定
 				</el-button>
-				<el-button v-else link type="success" @click="updateRoleStatus(row.id, unlockRoleApi, false)">解锁</el-button>
-				<el-button link type="danger" v-auth="'delete_user'" @click="deleteRole(row.id)">删除</el-button>
+				<el-button
+					v-else-if="row.status === BooleanEnum.NO && row.isDefault === BooleanEnum.NO"
+					link
+					v-auth="'unlock_role'"
+					type="success"
+					@click="updateRoleStatus(row.id, unlockRoleApi, false)"
+					>解锁</el-button
+				>
+				<el-button link type="danger" v-auth="'delete_role'" @click="deleteRole(row.id)">删除</el-button>
 			</template>
 		</basic-table>
 		<!-- 创建、编辑角色dialog -->
@@ -54,11 +66,15 @@
 			width="600px"
 			@closed="closeDialog"
 		>
-			<el-checkbox-group v-model="selectionPermissions">
-				<el-checkbox v-for="item in permissionList" :key="item.id" :label="item.id">
-					{{ item.title }}
-				</el-checkbox>
-			</el-checkbox-group>
+			<div v-for="item in permissionList" :key="item.label">
+				<p class="my-[10px]">{{ item.label }}</p>
+				<el-checkbox-group v-model="selectionPermissions">
+					<el-checkbox v-for="per in item.data" :key="per.id" :label="per.id">
+						{{ per.title }}
+					</el-checkbox>
+				</el-checkbox-group>
+			</div>
+
 			<template #footer>
 				<span class="dialog-footer">
 					<el-button @click="visible = false">取消</el-button>
@@ -88,11 +104,11 @@ import { floatToTree } from "@/utils";
 import roleDialog from "./components/role-dialog.vue";
 import { useMessageBox } from "@/hooks/use-messagebox";
 import { Role } from "@/models/role-model";
-import { Menu } from "@/models/menu-model";
 import { ResultEnum } from "@/enums/http-enum";
+import { groupArray } from "@/utils/shard";
 const tableRef = ref<InstanceType<typeof BasicTable>>();
 const menuList = reactive<any[]>([]);
-const permissionList = reactive<Menu.PermissionRaw[]>([]);
+const permissionList = reactive<any[]>([]);
 const roleRef = ref();
 const visible = ref(false);
 const selectionPermissions = ref<number[]>([]);
@@ -133,8 +149,8 @@ const closeDialog = () => {
 
 const deleteRole = (id: number) => {
 	console.log(id);
-	useMessageBox(deleteRoleApi, id, "删除该角色后，所有角色将转移到用户角色下，是否确认？").then(() => {
-		tableRef.value!.getTableList();
+	useMessageBox(deleteRoleApi, id, "删除该角色后，所有角色将转移到用户角色下，是否确认？").then(success => {
+		success && tableRef.value!.getTableList();
 	});
 };
 const updateRoleStatus = (id: number, api: (params: any) => Promise<any>, isLock: boolean) => {
@@ -148,7 +164,7 @@ onMounted(async () => {
 	const { data } = await getAllMenusApi();
 	const { data: permissionData } = await getAllPermissionsApi();
 	menuList.splice(0, menuList.length, ...floatToTree(data));
-	permissionList.splice(0, permissionList.length, ...permissionData);
+	permissionList.splice(0, permissionList.length, ...groupArray(permissionData, "group"));
 });
 </script>
 

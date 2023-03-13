@@ -22,10 +22,27 @@ export function loginApi(data: Login.ReqLoginForm) {
 }
 // * 注册
 export function registerApi(data: Login.ReqLoginForm) {
+	return http.request<ResultData>(
+		{
+			url: "/auth/signup",
+			method: RequestEnum.POST,
+			data
+		},
+		{ isShowSuccessMessage: true }
+	);
+}
+// * 退出登录
+export function logoutApi() {
 	return http.request<ResultData>({
-		url: "/auth/signup",
-		method: RequestEnum.POST,
-		data
+		url: "/auth/signout",
+		method: RequestEnum.POST
+	});
+}
+// * 刷新token
+export function refreshTokenApi() {
+	return http.request<ResultData>({
+		url: "/auth/refresh",
+		method: RequestEnum.POST
 	});
 }
 // * 修改个人资料

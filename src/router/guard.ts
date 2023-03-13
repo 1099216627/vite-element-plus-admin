@@ -23,7 +23,7 @@ export function createRouterGuard(router: Router) {
 		const title = import.meta.env.VITE_GLOB_APP_TITLE;
 		document.title = to.meta.title ? `${to.meta.title} - ${title}` : title;
 		if (from.path === LOGIN_PATH && to.name === ERROR_NAME) {
-			next({ path: BASE_PATH });
+			next({ path: LOGIN_PATH });
 			return;
 		}
 		//3.当token不存在时
