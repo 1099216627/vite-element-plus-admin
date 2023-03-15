@@ -1,27 +1,11 @@
-import { http } from "../index";
-import { ResultData } from "@/api/types";
-import { RequestEnum } from "@/enums/http-enum";
+import http, { urlPrefix } from "../index";
 import { Menu } from "@/models/menu-model";
 
 // * 获取用户菜单及权限
-export function getUserMenusApi() {
-	return http.request<ResultData<Menu.MenusAndPermissions>>({
-		url: "/menu/user",
-		method: RequestEnum.GET
-	});
-}
+export const getUserMenusApi = () => http.get<Menu.MenusAndPermissions>(urlPrefix + "/menu/user", {}, { noLoading: true });
 
 // * 获取全部菜单
-export function getAllMenusApi() {
-	return http.request<ResultData<Menu.ItemRaw[]>>({
-		url: "/menu",
-		method: RequestEnum.GET
-	});
-}
+export const getAllMenusApi = () => http.get(urlPrefix + "/menu", {}, { noLoading: true });
 // * 获取全部权限
-export function getAllPermissionsApi() {
-	return http.request<ResultData<Menu.PermissionRaw[]>>({
-		url: "/menu/permissions",
-		method: RequestEnum.GET
-	});
-}
+export const getAllPermissionsApi = () =>
+	http.get<Menu.PermissionRaw[]>(urlPrefix + "/menu/permissions", {}, { noLoading: true });

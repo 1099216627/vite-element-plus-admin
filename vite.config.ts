@@ -38,15 +38,15 @@ export default defineConfig(({ mode }: ConfigEnv): UserConfig => {
 		server: {
 			port: 4000 || viteEnv.VITE_PORT,
 			open: viteEnv.VITE_OPEN,
-			cors: true
+			cors: true,
 			// 跨域代理配置(http协议下暂用，解决跨域请求无法携带cookie问题)
-			// proxy: {
-			// 	"/api": {
-			// 		target: "http://localhost:3000",
-			// 		changeOrigin: true,
-			// 		rewrite: path => path.replace(/^\/api/, "/api")
-			// 	}
-			// }
+			proxy: {
+				"/api": {
+					target: "http://localhost:3000",
+					changeOrigin: true,
+					rewrite: path => path.replace(/^\/api/, "/api")
+				}
+			}
 		},
 		plugins: [
 			vue(),

@@ -6,7 +6,7 @@
 		margin-left: $side-bar-width;
 	}
 	.sidebar-container {
-		@apply transition-[width] duration-[280] h-full fixed text-[0] top-0 left-0 bottom-0 right-0 z-[1001] overflow-hidden;
+		@apply transition-[width] duration-[280] h-full fixed text-[0] top-0 left-0 bottom-0 right-0 z-[2002] overflow-hidden;
 
 		width: $side-bar-width;
 		background-color: var(--theme-menu-bg-color);

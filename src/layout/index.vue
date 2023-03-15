@@ -91,7 +91,7 @@ onMounted(() => {
 	}
 }
 .drawer-bg {
-	@apply bg-black absolute top-0 left-0 w-full h-full z-[999] opacity-30;
+	@apply bg-black absolute top-0 left-0 w-full h-full z-[2001] opacity-30;
 }
 .fixed-header {
 	@apply fixed top-0 right-0 z-10 transition-[width] duration-200;

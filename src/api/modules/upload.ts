@@ -1,13 +1,3 @@
-import { http } from "../index";
-import { ResultData } from "@/api/types";
+import http, { urlPrefix } from "../index";
 
-export function uploadImageApi(file: File) {
-	return http.upload<ResultData>(
-		{
-			url: "/api/v1/upload/image"
-		},
-		{
-			file
-		}
-	);
-}
+export const uploadImageApi = (data: FormData) => http.post<string>(urlPrefix + "/upload/image", data);

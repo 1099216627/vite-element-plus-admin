@@ -98,6 +98,6 @@ export function createRouterGuard(router: Router) {
 
 	router.onError(error => {
 		NProgress.done();
-		console.warn("路由错误", error.message);
+		console.log(error);
 	});
 }

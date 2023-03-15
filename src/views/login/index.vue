@@ -22,7 +22,7 @@
 				</el-form>
 				<div class="flex">
 					<el-button link @click="register">前往注册</el-button>
-					<el-checkbox class="ml-auto">7日免登录</el-checkbox>
+					<el-checkbox v-model="loginModel.sevenDays" class="ml-auto">7日免登录</el-checkbox>
 					<el-button class="w-[36%] ml-[10px]" type="primary" @click="login">登录</el-button>
 				</div>
 			</div>
@@ -42,10 +42,11 @@ const userStore = useUserStore();
 const router = useRouter();
 const captchaImg = ref("");
 const loginModel = reactive({
-	username: "",
-	password: "",
+	username: "feng1997",
+	password: "feng1997!",
 	code: "",
-	codeId: ""
+	codeId: "",
+	sevenDays: false
 });
 let formRef = ref();
 const rules = reactive({

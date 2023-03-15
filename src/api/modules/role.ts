@@ -1,71 +1,22 @@
-import { http } from "../index";
-import { ResPage, ResultData } from "@/api/types";
+import http, { urlPrefix } from "../index";
+import { ResPage } from "@/api/types";
 import { setObjToUrlParams } from "@/utils";
-import { RequestEnum } from "@/enums/http-enum";
 import { Role } from "@/models/role-model";
 //* 获取所有角色
-export function getAllRolesApi() {
-	return http.request<ResultData<Role.Detail[]>>({
-		url: "/role/all",
-		method: RequestEnum.GET
-	});
-}
-
+export const getAllRolesApi = () => http.get<Role.Detail[]>(urlPrefix + "/role/all", {}, { noLoading: true });
 //* 获取角色列表
-export function getRolesApi(params: Role.GetListParams) {
-	return http.request<ResultData<ResPage<Role.Detail>>>({
-		url: setObjToUrlParams("/role", params),
-		method: RequestEnum.GET
-	});
-}
-
+export const getRolesApi = (params: Role.GetListParams) =>
+	http.get<ResPage<Role.Detail>>(urlPrefix + setObjToUrlParams("/role", params));
 //* 新建角色
-export function createRoleApi(data: Role.CreateParams) {
-	return http.request<ResultData<Role.Detail>>({
-		url: "/role",
-		method: RequestEnum.POST,
-		data: data
-	});
-}
-
+export const createRoleApi = (data: Role.CreateParams) => http.post<Role.Detail>(urlPrefix + "/role", data);
 //* 编辑角色
-export function updateRoleApi(id: number, data: Role.CreateParams) {
-	return http.request<ResultData<Role.Detail>>({
-		url: `/role/${id}`,
-		method: RequestEnum.PUT,
-		data: data
-	});
-}
-
+export const updateRoleApi = (id: number, data: Role.CreateParams) => http.put<Role.Detail>(urlPrefix + `/role/${id}`, data);
 //* 删除角色
-export function deleteRoleApi(id: number) {
-	return http.request<ResultData>({
-		url: `/role/${id}`,
-		method: RequestEnum.DELETE
-	});
-}
-
+export const deleteRoleApi = (id: number) => http.delete(urlPrefix + `/role/${id}`);
 //* 分配角色权限
-export function assignRoleApi(id: number, data: { permissions: number[] }) {
-	return http.request<ResultData<Role.Detail>>({
-		url: `/role/permission/${id}`,
-		method: RequestEnum.PUT,
-		data: data
-	});
-}
-
+export const assignRoleApi = (id: number, data: { permissions: number[] }) =>
+	http.put<Role.Detail>(urlPrefix + `/role/permission/${id}`, data);
 // * 锁定角色状态
-export function lockRoleApi(id: number) {
-	return http.request<ResultData<Role.Detail>>({
-		url: `/role/lock/${id}`,
-		method: RequestEnum.PUT
-	});
-}
-
+export const lockRoleApi = (id: number) => http.put<Role.Detail>(urlPrefix + `/role/lock/${id}`);
 // * 解锁角色状态
-export function unlockRoleApi(id: number) {
-	return http.request<ResultData<Role.Detail>>({
-		url: `/role/unlock/${id}`,
-		method: RequestEnum.PUT
-	});
-}
+export const unlockRoleApi = (id: number) => http.put<Role.Detail>(urlPrefix + `/role/unlock/${id}`);
