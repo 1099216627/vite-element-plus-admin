@@ -42,8 +42,8 @@ const userStore = useUserStore();
 const router = useRouter();
 const captchaImg = ref("");
 const loginModel = reactive({
-	username: "feng1997",
-	password: "feng1997!",
+	username: "",
+	password: "",
 	code: "",
 	codeId: "",
 	sevenDays: false

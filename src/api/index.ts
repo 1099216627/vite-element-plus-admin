@@ -5,17 +5,20 @@ import { checkStatus } from "./helper/check-status";
 import { ElMessage } from "element-plus";
 import router from "@/router";
 import { RequestEnum, ResultEnum } from "@/enums/http-enum";
-import { useUserStore } from "@/store/modules/user";
 import { joinTimestamp } from "./helper/timestamp";
 import { AxiosCanceler } from "./helper/axios-cancel";
 import { addFailedRequest, isRefreshing, refreshToken } from "./helper/refresh";
 
 const config = {
-	// 默认地址请求地址，可在 .env.*** 文件中修改
+	// * 默认地址请求地址，可在 .env.*** 文件中修改
 	baseURL: import.meta.env.VITE_GLOBAL_HTTP_URL as string,
 	timeout: import.meta.env.VITE_GLOBAL_HTTP_TIMEOUT as number,
-	// 跨域时候允许携带凭证
-	withCredentials: true
+	// * 跨域时候允许携带凭证
+	withCredentials: true,
+	// * 请求头信息
+	headers: {
+		"Content-Type": "application/json;charset=UTF-8"
+	}
 };
 class RequestHttp {
 	service: AxiosInstance; // * axios实例
@@ -38,11 +41,8 @@ class RequestHttp {
 				}
 				// * 忽略重复请求
 				this.axiosCanceler.addPending(config);
-				const userStore = useUserStore();
 				// * 如果当前请求不需要显示 loading,在 api 服务中通过指定的第三个参数: { headers: { noLoading: true } }来控制不显示loading
 				config.headers!.noLoading && showFullScreenLoading();
-				const token = userStore.getToken();
-				if (config.headers && typeof config.headers?.set === "function") config.headers.set("x-access-token", token);
 				return config;
 			},
 			(error: AxiosError) => {
@@ -112,9 +112,11 @@ class RequestHttp {
 	delete<T = any>(url: string, params?: any, _object = {}): Promise<ResultData<T>> {
 		return this.service.delete(url, { params, ..._object });
 	}
-	download(url: string, params?: object, _object = {}): Promise<BlobPart> {
+	download(url: string, params?: object, _object = {}): Promise<ResultData<BlobPart>> {
 		return this.service.post(url, params, { ..._object, responseType: "blob" });
 	}
 }
 export const urlPrefix = import.meta.env.VITE_GLOBAL_HTTP_PREFIX as string;
+console.log(config, "config");
+
 export default new RequestHttp(config);

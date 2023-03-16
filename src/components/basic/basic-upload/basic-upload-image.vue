@@ -115,11 +115,13 @@ interface UploadEmits {
 const emit = defineEmits<UploadEmits>();
 const handleHttpUpload = async (options: UploadRequestOptions) => {
 	const file = options.file;
+	const formData = new FormData();
+	formData.append("file", file);
 	try {
 		const api = props.api ?? uploadImageApi;
-		const { data: result } = await api(file);
+		const { data: result } = await api(formData);
 
-		emit("update:imageUrl", result.data);
+		emit("update:imageUrl", result);
 		// 调用 el-form 内部的校验方法（可自动校验）
 		formItemContext?.prop && formContext?.validateField([formItemContext.prop as string]);
 		emit("check-validate");
